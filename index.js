@@ -26,3 +26,4 @@ const getProducts = async (id) =>
 
 app.get('/users', async (req, res)=>{res.send(await getUsers())})
 app.get('/products', async (req, res)=>{res.send(await getProducts())})
+app.get('/', async (req, res)=>{res.send(davidtrujillo123.github.io/protosoft_v1/html/home.html)})
