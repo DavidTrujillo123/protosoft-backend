@@ -14,5 +14,15 @@ const getUsers = async (id) =>
 
     return data.rows
 }
+const getProducts = async (id) =>
+{
+    if(id == null)
+        var data = (await db.query('SELECT * FROM productos'))
+    else
+        var data = (await db.query(`SELECT FROM productos WHERE id = ${id}`))
 
-app.get('/',async (req, res)=>{res.send(await getUsers())})
+    return data.rows
+}
+
+app.get('/users', async (req, res)=>{res.send(await getUsers())})
+app.get('/products', async (req, res)=>{res.send(await getProducts())})
