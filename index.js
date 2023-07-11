@@ -18,12 +18,14 @@ app.use((req, res, next) => {
   });
 
 //FUNCTIONS
-const getUser = async (id) =>
+const getUser = async (body) =>
 {
-    if(id == null)
-        var data = (await db.query('SELECT * FROM users'))
+    var user = Object.values(body)
+
+    if(JSON.stringify(user) === "[]")
+        var data = (await db.query('SELECT * FROM usuarios'))
     else
-        var data = (await db.query(`SELECT FROM users WHERE userid = ${id}`))
+        var data = (await db.query(`SELECT * FROM usuarios WHERE usucorreo = $1`, user))
 
     return data.rows
 }
@@ -32,7 +34,7 @@ const getProduct = async (id) =>
     if(id == null)
         var data = (await db.query('SELECT * FROM productos'))
     else
-        var data = (await db.query(`SELECT FROM productos WHERE id = ${id}`))
+        var data = (await db.query(`SELECT * FROM productos WHERE id = ${id}`))
 
     return data.rows
 }
@@ -44,12 +46,22 @@ const postUser = async (body) =>
     await db.query(query, user);
 }
 
+const searchUser = async (body) => 
+{
+    var email = body.email
+    var password = body.password
+    var query = `SELECT * FROM usuarios WHERE usucorreo = '${email}' AND usucontrasenia = '${password}'`
+    var data = await db.query(query)
+    return data.rows.at(0)
+}
+
 //INTERACTIONS
-app.get('/users', async (req, res)=>{res.send(await getUser())})
+app.get('/users', async (req, res)=>{res.send(await getUser(req.body))})
 app.get('/products', async (req, res)=>{res.send(await getProduct())})
 app.get('/', async (req, res)=>{res.send('Home')})
 
-app.post('/users', (req, res)=>{postUser(req.body)})
+app.post('/postUser', (req, res)=>{postUser(req.body)})
+app.post('/searchUser', async (req, res)=>{res.send(await searchUser(req.body))})
 
 
 app.listen(port, ()=>{console.log("localhost: " + port)})
