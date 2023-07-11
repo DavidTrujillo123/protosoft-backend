@@ -3,8 +3,15 @@ const app = express();
 const port = 8080;
 const {db} = require('./cnn')
 
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', ['*']);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    next();
+});
 app.listen(port, ()=>{console.log("localhost: " + port)})
 
+//FUNCTIONS
 const getUser = async (id) =>
 {
     if(id == null)
@@ -31,16 +38,9 @@ const postUser = async (body) =>
     await pool.query(query, user);
 }
 
+//INTERACTIONS
 app.get('/users', async (req, res)=>{res.send(await getUser())})
 app.get('/products', async (req, res)=>{res.send(await getProduct())})
 app.get('/', async (req, res)=>{res.send('Home')})
 
 app.post('/user', (req, res)=>{postUser(req.body)})
-
-
-app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-});
