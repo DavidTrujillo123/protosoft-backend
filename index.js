@@ -10,6 +10,15 @@ app.use(express.urlencoded({urlencoded: true}))
 app.use(express.json({type:"*/*"}))
 app.use(cors())
 
+
+app.use(function (req, res, next) {
+    res.setHeader('Access-Control-Allow-Origin', ['http://localhost:8888','https://protosoft-api.azurewebsites.net']);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    next();
+});
+
 //FUNCTIONS
 const getUser = async (id) =>
 {
