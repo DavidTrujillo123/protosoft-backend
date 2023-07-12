@@ -46,8 +46,9 @@ const postUser = async (body) =>
     var password = body.password
     var name = body.name
     var lastName = body.lastName
-    var query = `INSERT INTO users (usuid, usucorreo, usucontrasenia, usunombre, usuapellido) VALUES(${id}, ${email}, ${password}, ${name}, ${lastName})`;
-    await db.query(query, user);
+    var query = `INSERT INTO users (usuid, usucorreo, usucontrasenia, usunombre, usuapellido) 
+                    VALUES(${id}, ${email}, ${password}, ${name}, ${lastName})`
+    await db.query(query, user)
 }
 
 const searchUser = async (body) => 
