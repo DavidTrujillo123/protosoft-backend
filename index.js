@@ -41,8 +41,12 @@ const getProduct = async (id) =>
 
 const postUser = async (body) =>
 {
-    let user = Object.values(body);
-    var query = `INSERT INTO users (useremail, userpassword) VALUES($1, $2)`;
+    var id = body.id
+    var email = body.email
+    var password = body.password
+    var name = body.name
+    var lastName = body.lastName
+    var query = `INSERT INTO users (usuid, usucorreo, usucontrasenia, usunombre, usuapellido) VALUES(${id}, ${email}, ${password}, ${name}, ${lastName})`;
     await db.query(query, user);
 }
 
@@ -64,4 +68,4 @@ app.post('/postUser', (req, res)=>{postUser(req.body)})
 app.post('/searchUser', async (req, res)=>{res.send(await searchUser(req.body))})
 
 
-app.listen(port, ()=>{console.log("localhost: " + port)})
+app.listen(port, ()=>{console.log("localhost:" + port)})
