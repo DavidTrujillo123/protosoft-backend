@@ -64,6 +64,7 @@ const searchUser = async (body) =>
 app.get('/users', async (req, res)=>{res.send(await getUser(req.body))})
 app.get('/products', async (req, res)=>{res.send(await getProduct())})
 app.get('/', async (req, res)=>{res.send('Home')})
+app.get('/postUser', (req, res)=>{res.send('This link is only for posting not for getting..')})
 
 app.post('/postUser', (req, res)=>{postUser(req.body)})
 app.post('/searchUser', async (req, res)=>{res.send(await searchUser(req.body))})
