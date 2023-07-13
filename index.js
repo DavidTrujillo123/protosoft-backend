@@ -37,7 +37,7 @@ const getRegisters = async (body) =>
         if(id == null)
             var data = (await db.query('SELECT * FROM registros'))
         else
-            var data = (await db.query(`SELECT * FROM registros WHERE regid = ${id}`))
+            var data = (await db.query(`SELECT * FROM registros WHERE regid = '${id}'`))
         return data.rows
     } catch (error) {
         console.error("Error en la consulta:", error);
@@ -52,9 +52,9 @@ const postUser = async (body) =>
     var name = body.name
     var lastName = body.lastName
     var query = `INSERT INTO usuarios (rolid, usucorreo, usucontrasenia, usunombre, usuapellido) 
-                    VALUES(${rol}, ${email}, ${password}, ${name}, ${lastName})`
+                    VALUES('${rol}', '${email}', '${password}', '${name}', '${lastName}')`
     try {
-        await db.query(query, user)
+        await db.query(query)
     } catch (error) {
         console.error("Error en la consulta:", error);
         throw error;
