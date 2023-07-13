@@ -92,8 +92,12 @@ app.post('/login', async (req, res) => {
 app.get('/users', async (req, res)=>{res.send(await getUsers(req.body))})
 app.get('/registers', async (req, res)=>{res.send(await getRegisters(req.body))})
 
-app.post('/users', (req, res)=>{postUser(req.body)})
-app.post('/registers', (req, res)=>{postRegister(req.body)})
+app.post('/users', (req, res) => {
+    try {postUser(req.body); res.status(200).send("Usuario insertado correctamente")} 
+    catch (e) {res.status(500).send("Error interno del servidor")}})
+app.post('/registers', (req, res)=>{
+    try {postUser(req.body); res.status(200).send("Usuario insertado correctamente")} 
+    catch (e) {res.status(500).send("Error interno del servidor")}})
 
 
 
