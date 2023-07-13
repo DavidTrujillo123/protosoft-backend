@@ -1,6 +1,5 @@
 const express = require('express')
 const bodyparser = require('body-parser')
-const cors = require('cors')
 
 const app = express()
 const port = 8080;
@@ -17,18 +16,6 @@ app.use((req, res, next) => {
   });
 
 //FUNCTIONS
-const infoHome = () => {
-      
-    fs.readFile(filePath, 'utf8', (err, htmlContent) => {
-        if (err) {
-        console.error(err);
-        return res.status(500).send('Error interno del servidor');
-        }
-    
-        return htmlContent
-    });
-}
-
 const getUsers = async (body) =>
 {
     var user = Object.values(body)
@@ -72,8 +59,8 @@ const login = async (body) =>
 }
 
 //QUERIES
-app.get('/', async (req, res)=>{res.send(infoHome())})
-app.post('/login', async (req, res)=>{res.send(await login(req.body))})
+app.get('/', async (req, res)=>{res.sendFile(__dirname + '/info.html')})
+app.post('/login', async (req, res)=>{res.sendF(await login(req.body))})
 
 app.get('/users', async (req, res)=>{res.send(await getUsers(req.body))})
 app.get('/registers', async (req, res)=>{res.send(await getRegisters(req.body))})
