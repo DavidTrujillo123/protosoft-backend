@@ -15,7 +15,7 @@ app.use((req, res, next) => {
     next();
   });
 
-//FUNCTIONS
+//#region FUNCTIONS
 const getUsers = async (body) =>
 {
     var user = Object.values(body)
@@ -27,7 +27,7 @@ const getUsers = async (body) =>
         return data.rows
     } catch (error) {
         console.error("Error en la consulta:", error);
-        throw error; // Lanza el error para que sea manejado en otro lugar si es necesario
+        throw error;
     }
 }
 const getRegisters = async (body) =>
@@ -41,7 +41,7 @@ const getRegisters = async (body) =>
         return data.rows
     } catch (error) {
         console.error("Error en la consulta:", error);
-        throw error; // Lanza el error para que sea manejado en otro lugar si es necesario
+        throw error;
     }
 }
 const postUser = async (body) =>
@@ -57,7 +57,7 @@ const postUser = async (body) =>
         await db.query(query, user)
     } catch (error) {
         console.error("Error en la consulta:", error);
-        throw error; // Lanza el error para que sea manejado en otro lugar si es necesario
+        throw error;
     }
 }
 const postRegister = async (body) =>
@@ -66,7 +66,7 @@ const postRegister = async (body) =>
         
     } catch (error) {
         console.error("Error en la consulta:", error);
-        throw error; // Lanza el error para que sea manejado en otro lugar si es necesario
+        throw error;
     }
 }
 const login = async (body) => 
@@ -82,23 +82,28 @@ const login = async (body) =>
         throw error; // Lanza el error para que sea manejado en otro lugar si es necesario
     }
 }
+//#endregion
 
-//QUERIES
+//#region SPECIALS 
 app.get('/', async (req, res)=>{res.sendFile(__dirname + '/info.html')})
 app.post('/login', async (req, res) => {
     try {res.send(await login(req.body))} 
     catch (e){res.status(500).send("Error interno del servidor")}})
+//#endregion
 
+//#region GETS
 app.get('/users', async (req, res)=>{res.send(await getUsers(req.body))})
 app.get('/registers', async (req, res)=>{res.send(await getRegisters(req.body))})
+//#endregion
 
+//#region POSTS
 app.post('/users', (req, res) => {
     try {postUser(req.body); res.status(200).send("Usuario insertado correctamente")} 
     catch (e) {res.status(500).send("Error interno del servidor")}})
 app.post('/registers', (req, res)=>{
-    try {postUser(req.body); res.status(200).send("Usuario insertado correctamente")} 
+    try {postRegister(req.body); res.status(200).send("Usuario insertado correctamente")} 
     catch (e) {res.status(500).send("Error interno del servidor")}})
-
+//#endregion
 
 
 app.listen(port, ()=>{console.log("localhost:" + port)})
