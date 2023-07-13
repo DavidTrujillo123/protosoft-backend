@@ -19,28 +19,26 @@ app.use((req, res, next) => {
 //FUNCTIONS
 const getUsers = async (body) =>
 {
+    var user = Object.values(body)
     try {
-        var user = Object.values(body)
-
         if(JSON.stringify(user) === "[]")
-            var data = (await db.query('SELECT * FROM usuarios'))
+            var data = (await db.query('SELECT rolid, usucorreo, usunombre, usuapellido, usuimagen FROM public.usuarios'))
         else
-            var data = (await db.query(`SELECT * FROM usuarios WHERE usucorreo = $1`, user))
-
+            var data = (await db.query(`SELECT rolid, usucorreo, usunombre, usuapellido, usuimagen FROM usuarios WHERE usucorreo = $1`, user))
         return data.rows
     } catch (error) {
         console.error("Error en la consulta:", error);
         throw error; // Lanza el error para que sea manejado en otro lugar si es necesario
     }
 }
-const getRegisters = async (id) =>
+const getRegisters = async (body) =>
 {
+    var id = body.id
     try {
         if(id == null)
             var data = (await db.query('SELECT * FROM registros'))
         else
             var data = (await db.query(`SELECT * FROM registros WHERE regid = ${id}`))
-
         return data.rows
     } catch (error) {
         console.error("Error en la consulta:", error);
@@ -49,15 +47,24 @@ const getRegisters = async (id) =>
 }
 const postUser = async (body) =>
 {
+    var rol = body.rol
+    var email = body.email
+    var password = body.password
+    var name = body.name
+    var lastName = body.lastName
+    var query = `INSERT INTO users (usuid, rolid, usucorreo, usucontrasenia, usunombre, usuapellido) 
+                    VALUES(GenerarID(${rol}),${rol}, ${email}, ${password}, ${name}, ${lastName})`
     try {
-        var rol = body.rol
-        var email = body.email
-        var password = body.password
-        var name = body.name
-        var lastName = body.lastName
-        var query = `INSERT INTO users (usuid, rolid, usucorreo, usucontrasenia, usunombre, usuapellido) 
-                        VALUES(GenerarID(${rol}),${rol}, ${email}, ${password}, ${name}, ${lastName})`
         await db.query(query, user)
+    } catch (error) {
+        console.error("Error en la consulta:", error);
+        throw error; // Lanza el error para que sea manejado en otro lugar si es necesario
+    }
+}
+const postRegister = async (body) =>
+{
+    try {
+        
     } catch (error) {
         console.error("Error en la consulta:", error);
         throw error; // Lanza el error para que sea manejado en otro lugar si es necesario
