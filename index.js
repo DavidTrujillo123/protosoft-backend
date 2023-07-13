@@ -99,10 +99,10 @@ app.get('/registers', async (req, res)=>{res.send(await getRegisters(req.body))}
 
 //#region POSTS
 app.post('/users', (req, res) => {
-    try {postUser(req.body); res.status(200).send("Usuario insertado correctamente")} 
+    try {postUser(req.body)} 
     catch (e) {res.status(500).send("Error interno del servidor")}})
 app.post('/registers', (req, res)=>{
-    try {postRegister(req.body); res.status(200).send("Usuario insertado correctamente")} 
+    try {postRegister(req.body)} 
     catch (e) {res.status(500).send("Error interno del servidor")}})
 //#endregion
 
