@@ -19,37 +19,50 @@ app.use((req, res, next) => {
 //FUNCTIONS
 const getUsers = async (body) =>
 {
-    var user = Object.values(body)
+    try {
+        var user = Object.values(body)
 
-    if(JSON.stringify(user) === "[]")
-        var data = (await db.query('SELECT * FROM usuarios'))
-    else
-        var data = (await db.query(`SELECT * FROM usuarios WHERE usucorreo = $1`, user))
+        if(JSON.stringify(user) === "[]")
+            var data = (await db.query('SELECT * FROM usuarios'))
+        else
+            var data = (await db.query(`SELECT * FROM usuarios WHERE usucorreo = $1`, user))
 
-    return data.rows
+        return data.rows
+    } catch (error) {
+        console.error("Error en la consulta:", error);
+        throw error; // Lanza el error para que sea manejado en otro lugar si es necesario
+    }
 }
 const getRegisters = async (id) =>
 {
-    if(id == null)
-        var data = (await db.query('SELECT * FROM registros'))
-    else
-        var data = (await db.query(`SELECT * FROM registros WHERE regid = ${id}`))
+    try {
+        if(id == null)
+            var data = (await db.query('SELECT * FROM registros'))
+        else
+            var data = (await db.query(`SELECT * FROM registros WHERE regid = ${id}`))
 
-    return data.rows
+        return data.rows
+    } catch (error) {
+        console.error("Error en la consulta:", error);
+        throw error; // Lanza el error para que sea manejado en otro lugar si es necesario
+    }
 }
-
 const postUser = async (body) =>
 {
-    var rol = body.rol
-    var email = body.email
-    var password = body.password
-    var name = body.name
-    var lastName = body.lastName
-    var query = `INSERT INTO users (usuid, rolid, usucorreo, usucontrasenia, usunombre, usuapellido) 
-                    VALUES(GenerarID(${rol}),${rol}, ${email}, ${password}, ${name}, ${lastName})`
-    await db.query(query, user)
+    try {
+        var rol = body.rol
+        var email = body.email
+        var password = body.password
+        var name = body.name
+        var lastName = body.lastName
+        var query = `INSERT INTO users (usuid, rolid, usucorreo, usucontrasenia, usunombre, usuapellido) 
+                        VALUES(GenerarID(${rol}),${rol}, ${email}, ${password}, ${name}, ${lastName})`
+        await db.query(query, user)
+    } catch (error) {
+        console.error("Error en la consulta:", error);
+        throw error; // Lanza el error para que sea manejado en otro lugar si es necesario
+    }
 }
-
 const login = async (body) => 
 {
     try {
@@ -67,12 +80,8 @@ const login = async (body) =>
 //QUERIES
 app.get('/', async (req, res)=>{res.sendFile(__dirname + '/info.html')})
 app.post('/login', async (req, res) => {
-    try {
-      res.send(await login(req.body));
-    } catch (error) {
-      res.status(500).send("Error interno del servidor");
-    }
-  });
+    try {res.send(await login(req.body))} 
+    catch (e){res.status(500).send("Error interno del servidor")}})
 
 app.get('/users', async (req, res)=>{res.send(await getUsers(req.body))})
 app.get('/registers', async (req, res)=>{res.send(await getRegisters(req.body))})
