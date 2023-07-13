@@ -8,7 +8,6 @@ const {db} = require('./cnn')
 
 app.use(bodyparser.urlencoded({ extended: true }))
 app.use(bodyparser.json())
-// app.use(cors())
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -18,7 +17,19 @@ app.use((req, res, next) => {
   });
 
 //FUNCTIONS
-const getUser = async (body) =>
+const infoHome = () => {
+      
+    fs.readFile(filePath, 'utf8', (err, htmlContent) => {
+        if (err) {
+        console.error(err);
+        return res.status(500).send('Error interno del servidor');
+        }
+    
+        return htmlContent
+    });
+}
+
+const getUsers = async (body) =>
 {
     var user = Object.values(body)
 
@@ -29,29 +40,29 @@ const getUser = async (body) =>
 
     return data.rows
 }
-const getProduct = async (id) =>
+const getRegisters = async (id) =>
 {
     if(id == null)
-        var data = (await db.query('SELECT * FROM productos'))
+        var data = (await db.query('SELECT * FROM registros'))
     else
-        var data = (await db.query(`SELECT * FROM productos WHERE id = ${id}`))
+        var data = (await db.query(`SELECT * FROM registros WHERE regid = ${id}`))
 
     return data.rows
 }
 
 const postUser = async (body) =>
 {
-    var id = body.id
+    var rol = body.rol
     var email = body.email
     var password = body.password
     var name = body.name
     var lastName = body.lastName
-    var query = `INSERT INTO users (usuid, usucorreo, usucontrasenia, usunombre, usuapellido) 
-                    VALUES(${id}, ${email}, ${password}, ${name}, ${lastName})`
+    var query = `INSERT INTO users (usuid, rolid, usucorreo, usucontrasenia, usunombre, usuapellido) 
+                    VALUES(GenerarID(${rol}),${rol}, ${email}, ${password}, ${name}, ${lastName})`
     await db.query(query, user)
 }
 
-const searchUser = async (body) => 
+const login = async (body) => 
 {
     var email = body.email
     var password = body.password
@@ -60,14 +71,16 @@ const searchUser = async (body) =>
     return data.rows.at(0)
 }
 
-//INTERACTIONS
-app.get('/users', async (req, res)=>{res.send(await getUser(req.body))})
-app.get('/products', async (req, res)=>{res.send(await getProduct())})
-app.get('/', async (req, res)=>{res.send('Home')})
-app.get('/postUser', (req, res)=>{res.send('This link is only for posting not for getting..')})
+//QUERIES
+app.get('/', async (req, res)=>{res.send(infoHome())})
+app.post('/login', async (req, res)=>{res.send(await login(req.body))})
 
-app.post('/postUser', (req, res)=>{postUser(req.body)})
-app.post('/searchUser', async (req, res)=>{res.send(await searchUser(req.body))})
+app.get('/users', async (req, res)=>{res.send(await getUsers(req.body))})
+app.get('/registers', async (req, res)=>{res.send(await getRegisters(req.body))})
+
+app.post('/users', (req, res)=>{postUser(req.body)})
+app.post('/registers', (req, res)=>{postRegister(req.body)})
+
 
 
 app.listen(port, ()=>{console.log("localhost:" + port)})
