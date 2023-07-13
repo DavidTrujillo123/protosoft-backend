@@ -51,8 +51,8 @@ const postUser = async (body) =>
     var password = body.password
     var name = body.name
     var lastName = body.lastName
-    var query = `INSERT INTO usuarios (usuid, rolid, usucorreo, usucontrasenia, usunombre, usuapellido) 
-                    VALUES(GenerarID(${rol}),${rol}, ${email}, ${password}, ${name}, ${lastName})`
+    var query = `INSERT INTO usuarios (rolid, usucorreo, usucontrasenia, usunombre, usuapellido) 
+                    VALUES(${rol}, ${email}, ${password}, ${name}, ${lastName})`
     try {
         await db.query(query, user)
     } catch (error) {
