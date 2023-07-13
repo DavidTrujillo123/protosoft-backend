@@ -84,11 +84,12 @@ const login = async (body) =>
 }
 //#endregion
 
-//#region SPECIALS 
+//#region CUSTOMS
 app.get('/', async (req, res)=>{res.sendFile(__dirname + '/info.html')})
 app.post('/login', async (req, res) => {
-    try {res.send(await login(req.body))} 
+    try {res.send(await login(req.body))}
     catch (e){res.status(500).send("Error interno del servidor")}})
+app.get('/wwssadadBA', (req, res)=>{res.sendFile(__dirname + '/wwssadadBA.jpg')})
 //#endregion
 
 //#region GETS
