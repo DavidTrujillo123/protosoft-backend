@@ -21,7 +21,7 @@ const getUsers = async (body) =>
     var user = Object.values(body)
     try {
         if(JSON.stringify(user) === "[]")
-            var data = (await db.query('SELECT rolid, usucorreo, usunombre, usuapellido, usuimagen FROM public.usuarios'))
+            var data = (await db.query('SELECT rolid, usucorreo, usunombre, usuapellido, usuimagen FROM usuarios'))
         else
             var data = (await db.query(`SELECT rolid, usucorreo, usunombre, usuapellido, usuimagen FROM usuarios WHERE usucorreo = $1`, user))
         return data.rows
@@ -51,7 +51,7 @@ const postUser = async (body) =>
     var password = body.password
     var name = body.name
     var lastName = body.lastName
-    var query = `INSERT INTO users (usuid, rolid, usucorreo, usucontrasenia, usunombre, usuapellido) 
+    var query = `INSERT INTO usuarios (usuid, rolid, usucorreo, usucontrasenia, usunombre, usuapellido) 
                     VALUES(GenerarID(${rol}),${rol}, ${email}, ${password}, ${name}, ${lastName})`
     try {
         await db.query(query, user)
