@@ -1,5 +1,6 @@
 const express = require('express')
 const bodyparser = require('body-parser')
+const cors = require('cors')
 
 const app = express()
 const port = 8080;
@@ -51,16 +52,27 @@ const postUser = async (body) =>
 
 const login = async (body) => 
 {
-    var email = body.email
-    var password = body.password
-    var query = `SELECT * FROM usuarios WHERE usucorreo = '${email}' AND usucontrasenia = '${password}'`
-    var data = await db.query(query)
-    return data.rows.at(0)
+    try {
+        var email = body.email;
+        var password = body.password;
+        var query = `SELECT * FROM usuarios WHERE usucorreo = '${email}' AND usucontrasenia = '${password}'`;
+        var data = await db.query(query);
+        return data.rows.at(0);
+    } catch (error) {
+        console.error("Error en la consulta:", error);
+        throw error; // Lanza el error para que sea manejado en otro lugar si es necesario
+    }
 }
 
 //QUERIES
 app.get('/', async (req, res)=>{res.sendFile(__dirname + '/info.html')})
-app.post('/login', async (req, res)=>{res.sendF(await login(req.body))})
+app.post('/login', async (req, res) => {
+    try {
+      res.send(await login(req.body));
+    } catch (error) {
+      res.status(500).send("Error interno del servidor");
+    }
+  });
 
 app.get('/users', async (req, res)=>{res.send(await getUsers(req.body))})
 app.get('/registers', async (req, res)=>{res.send(await getRegisters(req.body))})
