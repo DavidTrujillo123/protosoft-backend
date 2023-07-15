@@ -38,7 +38,7 @@ const getUsers = async (body) =>
 {
     let sql_all = 'SELECT rolid, usucorreo, usunombre, usuapellido, usuimagen FROM usuarios';
     let sql_unic = `${sql_all} WHERE usucorreo = $1`;
-    getData(body, sql_all, sql_unic); 
+    return getData(body, sql_all, sql_unic); 
 }
 const postUser = async (body) =>
 {
@@ -83,11 +83,20 @@ const postRegister = async (body) =>
 }
 //#endregion
 
-//#region reino
+//#region GET Linneo
+
 const getKindom = async (body) =>{
-    let sql = 'Select * from usuarios';
-    return getData(body, sql);
+    let sql_all = 'Select reinombre from reinos';
+    let sql_unic = `${sql_all} WHERE reiid = $1`;
+    return getData(body, sql_all, sql_unic);
 }
+
+const getFilos = async (body) =>{
+    let sql_all = 'Select filnombre from filos';
+    let sql_unic = `${sql_all} WHERE filid = $1`;
+    return getData(body, sql_all, sql_unic);
+}
+
 
 
 
@@ -118,6 +127,7 @@ app.get('/wwssadadBA', (req, res)=>{res.sendFile(__dirname + '/wwssadadBA.jpg')}
 app.get('/users', async (req, res)=>{res.send(await getUsers(req.body))});
 app.get('/registers', async (req, res)=>{res.send(await getRegisters(req.body))});
 app.get('/protist/kingdom', async (req, res)=>{res.send(await getKindom(req.body))});
+app.get('/protist/filo', async (req, res)=>{res.send(await getFilos(req.body))});
 //#endregion
 
 //#region POSTS
