@@ -44,41 +44,6 @@ const getRegisters = async (body) =>
         throw error;
     }
 }
-// const postUser = async (body) =>
-// {
-//     var usuid = body.usuid;
-//     var rolid = body.rolid;
-    
-//     var usucorreo = body.usucorreo;
-//     var usucontrasenia = body.usucontrasenia;
-//     var usunombre = body.usunombre;
-//     var usuapellido = body.usuapellido;
-//     var usuestado = body.usuestado;
-//     var usuimagen = body.usuimagen || null;
-//     let user = {
-//         usuid_ob: usuid,
-//         usur: rolid,
-//         usuc: usucorreo,
-//         usucon: usucontrasenia,
-//         usunom: usunombre,
-//         usuest: usuestado,
-//         usuim: usuimagen
-
-//     }
-//     console.log(user);
-//     var query = `INSERT INTO public.usuarios(
-//         usuid, rolid, usucorreo, usucontrasenia, usunombre, usuapellido, usuestado, usuimagen)
-//         VALUES ("${usuid}", "${rolid}", "${usucorreo}", "${usucontrasenia}", "${usunombre}", "${usuapellido}", "${usuestado}","${usuimagen}")`;
-
-//                         // ('USU1', 'ADM', 'juanperez@example.com', '123456', 'Juan', 'Pérez', true, NULL)
-//     try {
-//         await db.query(query)
-//     } catch (error) {
-//         console.error("Error en la consulta:", error);
-//         throw error;
-//     }
-// }
-
 const postUser = async (body) => {
     const usuid = body.usuid;
     const rolid = body.rolid;
