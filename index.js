@@ -1,12 +1,12 @@
-const express = require('express')
-const bodyparser = require('body-parser')
+const express = require('express');
+const bodyparser = require('body-parser');
 
-const app = express()
+const app = express();
 const port = 8080;
 const {db} = require('./cnn')
 
-app.use(bodyparser.urlencoded({ extended: true }))
-app.use(bodyparser.json())
+app.use(bodyparser.urlencoded({ extended: true }));
+app.use(bodyparser.json());
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -16,33 +16,29 @@ app.use((req, res, next) => {
   });
 
 //#region FUNCTIONS
-const getUsers = async (body) =>
+
+const getData = async (body, sql_all, sql_unic) =>
 {
-    var user = Object.values(body)
+    var user = Object.values(body);
     try {
+        let data = null;
         if(JSON.stringify(user) === "[]")
-            var data = (await db.query('SELECT rolid, usucorreo, usunombre, usuapellido, usuimagen FROM usuarios'))
+            data = (await db.query(`${sql_all}`));
         else
-            var data = (await db.query(`SELECT rolid, usucorreo, usunombre, usuapellido, usuimagen FROM usuarios WHERE usucorreo = $1`, user))
-        return data.rows
+            data = (await db.query(`${sql_unic}`, user));
+        return data.rows;
     } catch (error) {
         console.error("Error en la consulta:", error);
         throw error;
     }
 }
-const getRegisters = async (body) =>
+
+//#region users
+const getUsers = async (body) =>
 {
-    var id = body.id
-    try {
-        if(id == null)
-            var data = (await db.query('SELECT * FROM registros'))
-        else
-            var data = (await db.query(`SELECT * FROM registros WHERE regid = '${id}'`))
-        return data.rows
-    } catch (error) {
-        console.error("Error en la consulta:", error);
-        throw error;
-    }
+    let sql_all = 'SELECT rolid, usucorreo, usunombre, usuapellido, usuimagen FROM usuarios';
+    let sql_unic = `${sql_all} WHERE usucorreo = $1`;
+    getData(body, sql_all, sql_unic); 
 }
 const postUser = async (body) =>
 {
@@ -60,6 +56,22 @@ const postUser = async (body) =>
         throw error;
     }
 }
+
+//#region registros
+const getRegisters = async (body) =>
+{
+    var id = body.id
+    try {
+        if(id == null)
+            var data = (await db.query('SELECT * FROM registros'))
+        else
+            var data = (await db.query(`SELECT * FROM registros WHERE regid = '${id}'`))
+        return data.rows
+    } catch (error) {
+        console.error("Error en la consulta:", error);
+        throw error;
+    }
+}
 const postRegister = async (body) =>
 {
     try {
@@ -69,6 +81,16 @@ const postRegister = async (body) =>
         throw error;
     }
 }
+//#endregion
+
+//#region reino
+const getKindom = async (body) =>{
+    let sql = 'Select * from usuarios';
+    return getData(body, sql);
+}
+
+
+
 const login = async (body) => 
 {
     try {
@@ -85,26 +107,27 @@ const login = async (body) =>
 //#endregion
 
 //#region CUSTOMS
-app.get('/', async (req, res)=>{res.sendFile(__dirname + '/info.html')})
+app.get('/', async (req, res)=>{res.sendFile(__dirname + '/info.html')});
 app.post('/login', async (req, res) => {
     try {res.send(await login(req.body))}
-    catch (e){res.status(500).send("Error interno del servidor")}})
-app.get('/wwssadadBA', (req, res)=>{res.sendFile(__dirname + '/wwssadadBA.jpg')})
+    catch (e){res.status(500).send("Error interno del servidor")}});
+app.get('/wwssadadBA', (req, res)=>{res.sendFile(__dirname + '/wwssadadBA.jpg')});
 //#endregion
 
 //#region GETS
-app.get('/users', async (req, res)=>{res.send(await getUsers(req.body))})
-app.get('/registers', async (req, res)=>{res.send(await getRegisters(req.body))})
+app.get('/users', async (req, res)=>{res.send(await getUsers(req.body))});
+app.get('/registers', async (req, res)=>{res.send(await getRegisters(req.body))});
+app.get('/protist/kingdom', async (req, res)=>{res.send(await getKindom(req.body))});
 //#endregion
 
 //#region POSTS
 app.post('/users', (req, res) => {
     try {postUser(req.body)} 
-    catch (e) {res.status(500).send("Error interno del servidor")}})
+    catch (e) {res.status(500).send("Error interno del servidor")}});
 app.post('/registers', (req, res)=>{
-    try {postRegister(req.body)} 
-    catch (e) {res.status(500).send("Error interno del servidor")}})
+    try {postRegister(req.body)}
+    catch (e) {res.status(500).send("Error interno del servidor")}});
 //#endregion
 
 
-app.listen(port, ()=>{console.log("localhost:" + port)})
+app.listen(port, ()=>{console.log("localhost:" + port)});
