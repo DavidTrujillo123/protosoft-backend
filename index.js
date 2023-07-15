@@ -57,6 +57,7 @@ const postUser = async (body) =>
     try {
         await db.query(query)
         console.log('Query Done')
+        return 'Query done'
     } catch (error) {
         console.error("Error en la consulta:", error);
         throw error;
@@ -64,6 +65,7 @@ const postUser = async (body) =>
 }
 const postRegister = async (body) =>
 {
+    
     try {
         
     } catch (error) {
