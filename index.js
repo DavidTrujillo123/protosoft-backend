@@ -79,7 +79,7 @@ const login = async (body) =>
         return data.rows.at(0);
     } catch (error) {
         console.error("Error en la consulta:", error);
-        throw error; // Lanza el error para que sea manejado en otro lugar si es necesario
+        throw error;
     }
 }
 //#endregion
