@@ -68,6 +68,7 @@ const postUser = async (body) => {
 
 const postRegister = async (body) =>
 {
+    
     try {
         
     } catch (error) {
@@ -76,12 +77,14 @@ const postRegister = async (body) =>
     }
 }
 const login = async (body) => 
-{
+{ 
+    var email = body.email;
+    var password = body.password;
+    var query = `SELECT * FROM usuarios WHERE usucorreo = '${email}' AND usucontrasenia = '${password}'`;
+    console.log('Query maked')
     try {
-        var email = body.email;
-        var password = body.password;
-        var query = `SELECT * FROM usuarios WHERE usucorreo = '${email}' AND usucontrasenia = '${password}'`;
         var data = await db.query(query);
+        console.log('Query done')
         return data.rows.at(0);
     } catch (error) {
         console.error("Error en la consulta:", error);
