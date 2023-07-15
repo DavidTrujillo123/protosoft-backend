@@ -3,7 +3,7 @@ const bodyparser = require('body-parser')
 
 const app = express()
 const port = 8080;
-const {db} = require('./cnn')
+const { db } = require('./cnn')
 
 app.use(bodyparser.urlencoded({ extended: true }))
 app.use(bodyparser.json())
@@ -13,14 +13,13 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     next();
-  });
+});
 
 //#region FUNCTIONS
-const getUsers = async (body) =>
-{
+const getUsers = async (body) => {
     var user = Object.values(body)
     try {
-        if(JSON.stringify(user) === "[]")
+        if (JSON.stringify(user) === "[]")
             var data = (await db.query('SELECT rolid, usucorreo, usunombre, usuapellido, usuimagen FROM usuarios'))
         else
             var data = (await db.query(`SELECT rolid, usucorreo, usunombre, usuapellido, usuimagen FROM usuarios WHERE usucorreo = $1`, user))
@@ -30,11 +29,10 @@ const getUsers = async (body) =>
         throw error;
     }
 }
-const getRegisters = async (body) =>
-{
+const getRegisters = async (body) => {
     var id = body.id
     try {
-        if(id == null)
+        if (id == null)
             var data = (await db.query('SELECT * FROM registros'))
         else
             var data = (await db.query(`SELECT * FROM registros WHERE regid = '${id}'`))
@@ -59,25 +57,24 @@ const postUser = async (body) => {
 
     try {
         await db.query(query, [usuid, rolid, usucorreo, usucontrasenia, usunombre, usuapellido, usuestado, usuimagen]);
+        return { success: true, message: 'Usuario creado correctamente, porfavor inicie sesión para continuar' };
     } catch (error) {
-        console.error("Error en la consulta:", error);
-        throw error;
-    } 
+        console.error('Error en la consulta:', error);
+        return { success: false, message: 'Error al insertar la información en la base de datos' };
+    }
 };
 
 
-const postRegister = async (body) =>
-{
-    
+const postRegister = async (body) => {
+
     try {
-        
+
     } catch (error) {
         console.error("Error en la consulta:", error);
         throw error;
     }
 }
-const login = async (body) => 
-{ 
+const login = async (body) => {
     var email = body.email;
     var password = body.password;
     var query = `SELECT * FROM usuarios WHERE usucorreo = '${email}' AND usucontrasenia = '${password}'`;
@@ -94,29 +91,34 @@ const login = async (body) =>
 //#endregion
 
 //#region CUSTOMS
-app.get('/', async (req, res)=>{res.sendFile(__dirname + '/info.html')});
+app.get('/', async (req, res) => { res.sendFile(__dirname + '/info.html') });
 app.post('/login', async (req, res) => {
-    try {res.send(await login(req.body))}
-    catch (e){res.status(500).send("Error interno del servidor")}});
-app.get('/wwssadadBA', (req, res)=>{res.sendFile(__dirname + '/wwssadadBA.jpg')});
+    try { res.send(await login(req.body)) }
+    catch (e) { res.status(500).send("Error interno del servidor") }
+});
+app.get('/wwssadadBA', (req, res) => { res.sendFile(__dirname + '/wwssadadBA.jpg') });
 //#endregion
 
 //#region GETS
-app.get('/users', async (req, res)=>{res.send(await getUsers(req.body))});
-app.get('/registers', async (req, res)=>{res.send(await getRegisters(req.body))});
+app.get('/users', async (req, res) => { res.send(await getUsers(req.body)) });
+app.get('/registers', async (req, res) => { res.send(await getRegisters(req.body)) });
 //#endregion
 
 //#region POSTS
-app.post('/users', (req, res) => {
+app.post('/users', async (req, res) => {
     try {
-        postUser(req.body);
-        res.json({msg: 'Registro exitoso!'});
-    } 
-    catch (e) {res.status(500).send(e+" Error interno del servidor")}});
-app.post('/registers', (req, res)=>{
-    try {postRegister(req.body)} 
-    catch (e) {res.status(500).send("Error interno del servidor")}});
+        const result = await postUser(req.body);
+        res.json(result);
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ success: false, message: 'Error interno del servidor' });
+    }
+});
+app.post('/registers', (req, res) => {
+    try { postRegister(req.body) }
+    catch (e) { res.status(500).send("Error interno del servidor") }
+});
 //#endregion
 
 
-app.listen(port, ()=>{console.log("localhost:" + port)});
+app.listen(port, () => { console.log("localhost:" + port) });
