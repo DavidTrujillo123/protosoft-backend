@@ -126,16 +126,16 @@ const login = async (body) =>
 //#endregion
 
 //#region CUSTOMS
-app.get('/', async (req, res)=>{res.sendFile(__dirname + '/info.html')})
+app.get('/', async (req, res)=>{res.sendFile(__dirname + '/info.html')});
 app.post('/login', async (req, res) => {
     try {res.send(await login(req.body))}
-    catch (e){res.status(500).send("Error interno del servidor")}})
-app.get('/wwssadadBA', (req, res)=>{res.sendFile(__dirname + '/wwssadadBA.jpg')})
+    catch (e){res.status(500).send("Error interno del servidor")}});
+app.get('/wwssadadBA', (req, res)=>{res.sendFile(__dirname + '/wwssadadBA.jpg')});
 //#endregion
 
 //#region GETS
-app.get('/users', async (req, res)=>{res.send(await getUsers(req.body))})
-app.get('/registers', async (req, res)=>{res.send(await getRegisters(req.body))})
+app.get('/users', async (req, res)=>{res.send(await getUsers(req.body))});
+app.get('/registers', async (req, res)=>{res.send(await getRegisters(req.body))});
 //#endregion
 
 //#region POSTS
@@ -144,11 +144,11 @@ app.post('/users', (req, res) => {
         postUser(req.body);
         res.json({msg: 'Registro exitoso!'});
     } 
-    catch (e) {res.status(500).send(e+" Error interno del servidor")}})
+    catch (e) {res.status(500).send(e+" Error interno del servidor")}});
 app.post('/registers', (req, res)=>{
     try {postRegister(req.body)} 
-    catch (e) {res.status(500).send("Error interno del servidor")}})
+    catch (e) {res.status(500).send("Error interno del servidor")}});
 //#endregion
 
 
-app.listen(port, ()=>{console.log("localhost:" + port)})
+app.listen(port, ()=>{console.log("localhost:" + port)});
