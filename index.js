@@ -53,8 +53,10 @@ const postUser = async (body) =>
     var lastName = body.lastName
     var query = `INSERT INTO usuarios (rolid, usucorreo, usucontrasenia, usunombre, usuapellido) 
                     VALUES('${rol}', '${email}', '${password}', '${name}', '${lastName}')`
+                    console.log('Query maked')
     try {
         await db.query(query)
+        console.log('Query Done')
     } catch (error) {
         console.error("Error en la consulta:", error);
         throw error;
@@ -70,12 +72,14 @@ const postRegister = async (body) =>
     }
 }
 const login = async (body) => 
-{
+{ 
+    var email = body.email;
+    var password = body.password;
+    var query = `SELECT * FROM usuarios WHERE usucorreo = '${email}' AND usucontrasenia = '${password}'`;
+    console.log('Query maked')
     try {
-        var email = body.email;
-        var password = body.password;
-        var query = `SELECT * FROM usuarios WHERE usucorreo = '${email}' AND usucontrasenia = '${password}'`;
         var data = await db.query(query);
+        console.log('Query done')
         return data.rows.at(0);
     } catch (error) {
         console.error("Error en la consulta:", error);
@@ -99,6 +103,7 @@ app.get('/registers', async (req, res)=>{res.send(await getRegisters(req.body))}
 
 //#region POSTS
 app.post('/users', (req, res) => {
+    console.log('2')
     try {postUser(req.body)} 
     catch (e) {res.status(500).send("Error interno del servidor")}})
 app.post('/registers', (req, res)=>{
