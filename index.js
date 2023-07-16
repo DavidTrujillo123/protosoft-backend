@@ -95,7 +95,7 @@ const getReinos = async (body) => {
 const getFilos = async (body) => {
     let id = body.id;
     const sql_all = `SELECT * FROM filos`;
-    const sql_uniq = `SELECT * FROM filos WHERE filid like '${id}'`;
+    const sql_uniq = `SELECT * FROM filos WHERE reiid like '${id}'`;
     return await getData(body, sql_all, sql_uniq);
 }
 
@@ -195,6 +195,17 @@ app.post('/registers', (req, res) => {
     try { postRegister(req.body) }
     catch (e) { res.status(500).send("Error interno del servidor") }
 });
+
+
+//PROTISTAS
+app.post('/registers/filos', async (req, res) => { res.send(await getFilos(req.body)) });
+app.post('/registers/clases', async (req, res) => { res.send(await getClases(req.body)) });
+app.post('/registers/ordenes', async (req, res) => { res.send(await getOrdenes(req.body)) });
+app.post('/registers/familias', async (req, res) => { res.send(await getFamilias(req.body)) });
+app.post('/registers/generos', async (req, res) => { res.send(await getGeneros(req.body)) });
+app.post('/registers/especies', async (req, res) => { res.send(await getEspecies(req.body)) });
+
+app.post('/registers/clases', async (req, res) => { res.send(await getClases(req.body)) });
 //#endregion
 
 
