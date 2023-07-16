@@ -1,12 +1,12 @@
-const express = require('express');
-const bodyparser = require('body-parser');
+const express = require('express')
+const bodyparser = require('body-parser')
 
-const app = express();
+const app = express()
 const port = 8080;
 const { db } = require('./cnn')
 
-app.use(bodyparser.urlencoded({ extended: true }));
-app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: true }))
+app.use(bodyparser.json())
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -16,16 +16,13 @@ app.use((req, res, next) => {
 });
 
 //#region FUNCTIONS
-
-const getData = async (body, sql_all, sql_unic) =>
-{
-    var user = Object.values(body);
+const getUsers = async (body) => {
+    var user = Object.values(body)
     try {
-        let data = null;
-        if(JSON.stringify(user) === "[]")
-            data = (await db.query(`${sql_all}`));
+        if (JSON.stringify(user) === "[]")
+            var data = (await db.query('SELECT rolid, usucorreo, usunombre, usuapellido, usuimagen FROM usuarios'))
         else
-            data = (await db.query(`${sql_unic}`, user));
+            var data = (await db.query(`SELECT rolid, usucorreo, usunombre, usuapellido, usuimagen FROM usuarios WHERE usucorreo = $1`, user))
         return data.rows;
     } catch (error) {
         console.error("Error en la consulta:", error);
@@ -54,12 +51,12 @@ const postUser = async (body) => {
     const usuapellido = body.usuapellido;
     const usuestado = body.usuestado;
     const usuimagen = body.usuimagen || null;
-
+    const usutelefono = body.usutelefono;
     const query = `INSERT INTO usuarios (usuid, rolid, usucorreo, usucontrasenia, usunombre, usuapellido, usuestado, usuimagen)
-                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
+                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`;
 
     try {
-        await db.query(query, [usuid, rolid, usucorreo, usucontrasenia, usunombre, usuapellido, usuestado, usuimagen]);
+        await db.query(query, [usuid, rolid, usucorreo, usucontrasenia, usunombre, usuapellido, usuestado, usuimagen, usutelefono]);
         return { success: true, message: 'Usuario creado correctamente, porfavor inicie sesión para continuar' };
     } catch (error) {
         console.error('Error en la consulta:', error);
