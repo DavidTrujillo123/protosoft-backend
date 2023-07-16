@@ -13,7 +13,7 @@ app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     next();
-});
+})
 
 //#region FUNCTIONS
 const getUsers = async (body) => {
@@ -62,9 +62,7 @@ const postUser = async (body) => {
         console.error('Error en la consulta:', error);
         return { success: false, message: 'Error al insertar la información en la base de datos' };
     }
-};
-
-
+}
 const postRegister = async (body) => {
 
     try {
