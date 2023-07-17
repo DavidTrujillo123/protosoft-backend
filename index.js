@@ -15,12 +15,11 @@ app.use((req, res, next) => {
     next();
 })
 
-const getData = async (body, sql_all, sql_unic) =>
-{
+const getData = async (body, sql_all, sql_unic) => {
     let user = Object.values(body);
     try {
         let data = null;
-        if(JSON.stringify(user) === "[]")
+        if (JSON.stringify(user) === "[]")
             data = (await db.query(`${sql_all}`));
         else
             data = (await db.query(`${sql_unic}`));
@@ -61,22 +60,11 @@ const postUser = async (body) => {
     const pregunta2 = body.pregunta2;
     const respuesta2 = body.respuesta2;
 
-    const query = `INSERT INTO usuarios (rolid, usucorreo, usucontrasenia, usunombre, usuapellido, usuestado, usuimagen, usutelefono)
-                   VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`;
+    const query = `SELECT insert_usuarios($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`;
 
     try {
-        await db.query(query, [rolid, usucorreo, usucontrasenia, usunombre, usuapellido, usuestado, usuimagen, usutelefono]);
-        //Buscar userid
-        const usuid = (await db.query(`SELECT usuid FROM usuarios WHERE usucorreo like '${usucorreo}'`)).rows;
-        //inserts de preguntas y respuestas
-        const query1 = `INSERT INTO public.preguntas_recuperacion(
-            usuid, pregunta, respuesta)
-                VALUES ('${usuid[0].usuid}', '${pregunta1}', '${respuesta1}');`
-        const query2 = `INSERT INTO public.preguntas_recuperacion(
-            usuid, pregunta, respuesta)
-                VALUES ('${usuid[0].usuid}', '${pregunta2}', '${respuesta2}');`
-        await db.query(query1);
-        await db.query(query2);
+        await db.query(query, [rolid, usucorreo, usucontrasenia, usunombre, 
+            usuapellido, usuestado, usuimagen, usutelefono, pregunta1, respuesta1,pregunta2, respuesta2]);
         return { success: true, message: 'Usuario creado correctamente, porfavor inicie sesión para continuar' };
     } catch (error) {
         console.error('Error en la consulta:', error);
@@ -135,10 +123,31 @@ const getEspecies = async (body) => {
 }
 
 
-const postRegister = async (body) => {
-
+const postRegisterProt = async (body) => {
+    const usuid = body.usuid;
+    const regestado = body.regestado;
+    const regnombre_cientifico = body.regnombre_cientifico;
+	const regnombre_vulgar = body.regnombre_vulgar;
+    const regespecie = body.regespecie;
+    const reggenero = body.reggenero;
+    const regfamilia = body.regfamilia;
+	const regorden = body.regorden;
+    const regclase = body.regclase;
+    const regfilo = body.regfilo;
+    const regreino = body.regreino; 
+	const regdescripcion = body.regdescripcion
+    const reghabitat = body.reghabitat;
+    const img = body.img;
+    console.log(img);
+    const query = `SELECT insert_registros($1, $2, $3,
+                        $4, $5, $6,
+                        $7, $8, $9, $10,
+                        $11, $12, $13, $14);`;
     try {
-
+        await db.query(query, [usuid, regestado,regnombre_cientifico, regnombre_vulgar, 
+            regespecie, reggenero, regfamilia, regorden, regclase, regfilo, regreino, 
+            regdescripcion, reghabitat, img]);
+        return { success: true, message: 'Registro creado correctamente, puedes verlo en Mis registros!' };
     } catch (error) {
         console.error("Error en la consulta:", error);
         throw error;
@@ -191,9 +200,14 @@ app.post('/users', async (req, res) => {
         res.status(500).json({ success: false, message: 'Error interno del servidor' });
     }
 });
-app.post('/registers', (req, res) => {
-    try { postRegister(req.body) }
-    catch (e) { res.status(500).send("Error interno del servidor") }
+app.post('/registers', async (req, res) => {
+    try {
+        const result = await postRegisterProt(req.body);
+        res.json(result);
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ success: false, message: 'Error interno del servidor' });
+    }
 });
 
 
@@ -205,7 +219,6 @@ app.post('/registers/familias', async (req, res) => { res.send(await getFamilias
 app.post('/registers/generos', async (req, res) => { res.send(await getGeneros(req.body)) });
 app.post('/registers/especies', async (req, res) => { res.send(await getEspecies(req.body)) });
 
-app.post('/registers/clases', async (req, res) => { res.send(await getClases(req.body)) });
 //#endregion
 
 
