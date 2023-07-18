@@ -167,6 +167,20 @@ const login = async (body) => {
         throw error;
     }
 }
+
+const postUserRegister = async (body) => {
+    const usuid = body.usuid;
+    const query = `SELECT * FROM registros_de_usuario WHERE usuario_id like $1;`;
+    try {
+        let data = await db.query(query, [usuid])
+        return data.rows;
+        
+    } catch (error) {
+        console.error("Error en la consulta:", error);
+        throw error;
+    }
+}
+
 //#endregion
 
 //#region CUSTOMS
@@ -187,6 +201,7 @@ app.get('/registers/ordenes', async (req, res) => { res.send(await getOrdenes(re
 app.get('/registers/familias', async (req, res) => { res.send(await getFamilias(req.body)) });
 app.get('/registers/generos', async (req, res) => { res.send(await getGeneros(req.body)) });
 app.get('/registers/especies', async (req, res) => { res.send(await getEspecies(req.body)) });
+
 
 //#endregion
 
@@ -218,7 +233,7 @@ app.post('/registers/ordenes', async (req, res) => { res.send(await getOrdenes(r
 app.post('/registers/familias', async (req, res) => { res.send(await getFamilias(req.body)) });
 app.post('/registers/generos', async (req, res) => { res.send(await getGeneros(req.body)) });
 app.post('/registers/especies', async (req, res) => { res.send(await getEspecies(req.body)) });
-
+app.post('/registers/misregistros', async (req, res) => { res.send(await postUserRegister(req.body)) });
 //#endregion
 
 
