@@ -138,7 +138,6 @@ const postRegisterProt = async (body) => {
 	const regdescripcion = body.regdescripcion
     const reghabitat = body.reghabitat;
     const img = body.img;
-    console.log(img);
     const query = `SELECT insert_registros($1, $2, $3,
                         $4, $5, $6,
                         $7, $8, $9, $10,
@@ -181,6 +180,29 @@ const postUserRegister = async (body) => {
     }
 }
 
+const getAllregisters = async () => {
+    const query = 'SELECT * FROM registros_de_usuario;';
+    try {
+        let data = await db.query(query)
+        return data.rows;
+    } catch (error) {
+        console.error("Error en la consulta:", error);
+        throw error;
+    }
+}
+
+const getTenRegisters = async () => {
+    const query = 'SELECT * FROM registros_de_usuario order by registro_id asc limit 10;';
+    try {
+        let data = await db.query(query)
+        return data.rows;
+    } catch (error) {
+        console.error("Error en la consulta:", error);
+        throw error;
+    }
+}
+
+
 //#endregion
 
 //#region CUSTOMS
@@ -194,6 +216,8 @@ app.get('/wwssadadBA', (req, res) => { res.sendFile(__dirname + '/wwssadadBA.jpg
 
 //#region GETS
 app.get('/users', async (req, res) => { res.send(await getUsers(req.body)) });
+app.get('/registers/users', async (req, res) => { res.send(await getAllregisters())});
+app.get('/registers/users/ten', async (req, res) => { res.send(await getTenRegisters()) });
 app.get('/registers/reinos', async (req, res) => { res.send(await getReinos(req.body)) });
 app.get('/registers/filos', async (req, res) => { res.send(await getFilos(req.body)) });
 app.get('/registers/clases', async (req, res) => { res.send(await getClases(req.body)) });
