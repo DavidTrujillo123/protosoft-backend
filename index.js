@@ -168,6 +168,21 @@ const login = async (body) => {
     }
 }
 
+const filter = async (body) => {
+    let radio = body.radio;
+    let name = body.name;
+    let query = `SELECT * FROM FiltrarBusqueda('${radio}', '${name}')`;
+    console.log('Query maked')
+    try {
+        var data = await db.query(query);
+        console.log('Query done')
+        return data.rows;
+    } catch (error) {
+        console.error("Error en la consulta:", error);
+        throw error;
+    }
+}
+
 const postUserRegister = async (body) => {
     const usuid = body.usuid;
     const query = `SELECT * FROM registros_de_usuario WHERE usuario_id like $1;`;
@@ -187,6 +202,10 @@ const postUserRegister = async (body) => {
 app.get('/', async (req, res) => { res.sendFile(__dirname + '/info.html') });
 app.post('/login', async (req, res) => {
     try { res.send(await login(req.body)) }
+    catch (e) { res.status(500).send("Error interno del servidor") }
+});
+app.post('/filter', async (req, res) => {
+    try { res.send(await filter(req.body)) }
     catch (e) { res.status(500).send("Error interno del servidor") }
 });
 app.get('/wwssadadBA', (req, res) => { res.sendFile(__dirname + '/wwssadadBA.jpg') });
