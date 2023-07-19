@@ -188,6 +188,21 @@ const filter = async (body) => {
     }
 }
 
+const switchstate = async (body) => {
+    let id = body.id;
+    let state = body.state;
+    let query = `SELECT * FROM CambiarEstado('${id}', ${state})`;
+    console.log('Query maked')
+    try {
+        var data = await db.query(query);
+        console.log('Switchstate done.')
+        return 'Switchstate done.';
+    } catch (error) {
+        console.error("Error en la consulta:", error);
+        throw error;
+    }
+}
+
 const postUserRegister = async (body) => {
     const usuid = body.usuid;
     const query = `SELECT * FROM registros_de_usuario WHERE usuario_id like $1;`;
@@ -237,6 +252,10 @@ app.post('/login', async (req, res) => {
 });
 app.post('/filter', async (req, res) => {
     try { res.send(await filter(req.body)) }
+    catch (e) { res.status(500).send("Error interno del servidor") }
+});
+app.post('/switchstate', async (req, res) => {
+    try { res.send(await switchstate(req.body)) }
     catch (e) { res.status(500).send("Error interno del servidor") }
 });
 app.get('/wwssadadBA', (req, res) => { res.sendFile(__dirname + '/wwssadadBA.jpg') });
