@@ -29,7 +29,15 @@ const getData = async (body, sql_all, sql_unic) => {
         throw error;
     }
 }
-
+const getJustData = async (query) =>{
+    try {
+        let data = await db.query(query)
+        return data.rows;
+    } catch (error) {
+        console.error("Error en la consulta:", error);
+        throw error;
+    }
+}
 //#region FUNCTIONS
 const getUsers = async (body) => {
     let user = Object.values(body)
@@ -63,8 +71,8 @@ const postUser = async (body) => {
     const query = `SELECT insert_usuarios($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`;
 
     try {
-        await db.query(query, [rolid, usucorreo, usucontrasenia, usunombre, 
-            usuapellido, usuestado, usuimagen, usutelefono, pregunta1, respuesta1,pregunta2, respuesta2]);
+        await db.query(query, [rolid, usucorreo, usucontrasenia, usunombre,
+            usuapellido, usuestado, usuimagen, usutelefono, pregunta1, respuesta1, pregunta2, respuesta2]);
         return { success: true, message: 'Usuario creado correctamente, porfavor inicie sesión para continuar' };
     } catch (error) {
         console.error('Error en la consulta:', error);
@@ -127,25 +135,24 @@ const postRegisterProt = async (body) => {
     const usuid = body.usuid;
     const regestado = body.regestado;
     const regnombre_cientifico = body.regnombre_cientifico;
-	const regnombre_vulgar = body.regnombre_vulgar;
+    const regnombre_vulgar = body.regnombre_vulgar;
     const regespecie = body.regespecie;
     const reggenero = body.reggenero;
     const regfamilia = body.regfamilia;
-	const regorden = body.regorden;
+    const regorden = body.regorden;
     const regclase = body.regclase;
     const regfilo = body.regfilo;
-    const regreino = body.regreino; 
-	const regdescripcion = body.regdescripcion
+    const regreino = body.regreino;
+    const regdescripcion = body.regdescripcion
     const reghabitat = body.reghabitat;
     const img = body.img;
-    console.log(img);
     const query = `SELECT insert_registros($1, $2, $3,
                         $4, $5, $6,
                         $7, $8, $9, $10,
                         $11, $12, $13, $14);`;
     try {
-        await db.query(query, [usuid, regestado,regnombre_cientifico, regnombre_vulgar, 
-            regespecie, reggenero, regfamilia, regorden, regclase, regfilo, regreino, 
+        await db.query(query, [usuid, regestado, regnombre_cientifico, regnombre_vulgar,
+            regespecie, reggenero, regfamilia, regorden, regclase, regfilo, regreino,
             regdescripcion, reghabitat, img]);
         return { success: true, message: 'Registro creado correctamente, puedes verlo en Mis registros!' };
     } catch (error) {
@@ -156,11 +163,9 @@ const postRegisterProt = async (body) => {
 const login = async (body) => {
     let email = body.email;
     let password = body.password;
-    let query = `SELECT * FROM usuarios WHERE usucorreo = '${email}' AND usucontrasenia = '${password}'`;
-    console.log('Query maked')
+    let query = `SELECT * FROM usuarios WHERE usucorreo like '${email}' AND usucontrasenia like '${password}'`;
     try {
         var data = await db.query(query);
-        console.log('Query done')
         return data.rows.at(0);
     } catch (error) {
         console.error("Error en la consulta:", error);
@@ -189,12 +194,38 @@ const postUserRegister = async (body) => {
     try {
         let data = await db.query(query, [usuid])
         return data.rows;
-        
+
     } catch (error) {
         console.error("Error en la consulta:", error);
         throw error;
     }
 }
+
+const getTenSimpleRegisters = async () => {
+    const query = `select regnombre_cientifico, imgruta 
+                    from registros, registroimg 
+                    where registros.regid = registroimg.regid 
+                    order by regfechasis desc
+                    limit 10;`;
+    return getJustData(query);
+}
+const getSimpleRegisters = async () =>{
+    const query = `select regnombre_cientifico, imgruta 
+    from registros, registroimg 
+    where registros.regid = registroimg.regid 
+    order by regfechasis desc;`;
+    return getJustData(query);
+}
+const getAllregisters = async () => {
+    const query = 'SELECT * FROM registros_de_usuario;';
+    return getJustData(query);
+}
+
+const getTenRegisters = async () => {
+    const query = 'SELECT * FROM registros_de_usuario order by registro_id asc limit 10;';
+    return getJustData(query);
+}
+
 
 //#endregion
 
@@ -213,6 +244,10 @@ app.get('/wwssadadBA', (req, res) => { res.sendFile(__dirname + '/wwssadadBA.jpg
 
 //#region GETS
 app.get('/users', async (req, res) => { res.send(await getUsers(req.body)) });
+app.get('/registers/tensimple', async (req, res) => { res.send(await getTenSimpleRegisters()) });
+app.get('/registers/simple', async (req, res) => { res.send(await getSimpleRegisters()) });
+app.get('/registers/users', async (req, res) => { res.send(await getAllregisters()) });
+app.get('/registers/users/ten', async (req,res) => { res.send(await getTenRegisters()) });
 app.get('/registers/reinos', async (req, res) => { res.send(await getReinos(req.body)) });
 app.get('/registers/filos', async (req, res) => { res.send(await getFilos(req.body)) });
 app.get('/registers/clases', async (req, res) => { res.send(await getClases(req.body)) });
