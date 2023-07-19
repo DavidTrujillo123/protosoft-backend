@@ -155,11 +155,9 @@ const postRegisterProt = async (body) => {
 const login = async (body) => {
     let email = body.email;
     let password = body.password;
-    let query = `SELECT * FROM usuarios WHERE usucorreo = '${email}' AND usucontrasenia = '${password}'`;
-    console.log('Query maked')
+    let query = `SELECT * FROM usuarios WHERE usucorreo like '${email}' AND usucontrasenia like '${password}'`;
     try {
         var data = await db.query(query);
-        console.log('Query done')
         return data.rows.at(0);
     } catch (error) {
         console.error("Error en la consulta:", error);
