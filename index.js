@@ -191,12 +191,13 @@ const filter = async (body) => {
 const switchstate = async (body) => {
     let id = body.id;
     let state = body.state;
-    let query = `SELECT * FROM CambiarEstado('${id}', ${state})`;
-    console.log('Query maked')
+    let query = `UPDATE registros
+	            SET regestado = '${state}'
+	            WHERE regid like '${id}'`;
     try {
-        var data = await db.query(query);
-        console.log('Switchstate done.')
-        return 'Switchstate done.';
+        await db.query(query);
+        console.log('Switchstate done.');
+        return 'Estado modificado correctamente';
     } catch (error) {
         console.error("Error en la consulta:", error);
         throw error;
@@ -333,6 +334,9 @@ app.post('/registers/familias', async (req, res) => { res.send(await getFamilias
 app.post('/registers/generos', async (req, res) => { res.send(await getGeneros(req.body)) });
 app.post('/registers/especies', async (req, res) => { res.send(await getEspecies(req.body)) });
 app.post('/registers/misregistros', async (req, res) => { res.send(await postUserRegister(req.body)) });
+
+
+app.put('/registers/updatestate', async (req, res) => { res.send(await switchstate(req.body))});
 //#endregion
 
 
