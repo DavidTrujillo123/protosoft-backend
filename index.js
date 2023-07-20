@@ -196,22 +196,20 @@ const switchstate = async (body) => {
 	            WHERE regid like '${id}'`;
     try {
         await db.query(query);
-        console.log('Switchstate done.');
-        return 'Estado modificado correctamente';
+        return { success: true, message: 'Registro actualizado correctamente✔️!' };
     } catch (error) {
         console.error("Error en la consulta:", error);
         throw error;
     }
 }
 
-const eraseregister = async (body) => {
+const eraserRegister = async (body) => {
     let id = body.id;
-    let query = `DELETE FROM registroimg WHERE registroimg.regid = '${id}'; DELETE FROM registros WHERE registros.regid = '${id}'`;
-    console.log('Query maked')
+    console.log(id);
+    let query = `DELETE FROM registroimg WHERE registroimg.regid = '${id}'; DELETE FROM registros WHERE registros.regid = '${id}';`;
     try {
-        var data = await db.query(query);
-        console.log('Delete done.')
-        return 'Delete done.';
+        await db.query(query);
+        return { success: true, message: 'Registro eliminado correctamente✔️!' };
     } catch (error) {
         console.error("Error en la consulta:", error);
         throw error;
@@ -324,7 +322,29 @@ app.post('/registers/especies', async (req, res) => { res.send(await getEspecies
 app.post('/registers/misregistros', async (req, res) => { res.send(await postUserRegister(req.body)) });
 
 
-app.put('/registers/updatestate', async (req, res) => { res.send(await switchstate(req.body))});
+//Delete
+app.post('/registers/eraserregister', async (req, res) => { 
+    try {
+        const result = await eraserRegister(req.body);
+        res.json(result);
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ success: false, message: 'Error interno del servidor' });
+    }
+});
+
+app.put('/registers/updatestate', async (req, res) => { 
+    try {
+        const result = await switchstate(req.body);
+        res.json(result);
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ success: false, message: 'Error interno del servidor' });
+    }
+});
+
+
+
 //#endregion
 
 
