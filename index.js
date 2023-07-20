@@ -298,7 +298,7 @@ app.post('/users', async (req, res) => {
         res.json(result);
     } catch (error) {
         console.error('Error:', error.message);
-        res.status(500).json({ success: false, message: 'Error interno del servidor' });
+        res.status(500).json({ success: false, message: 'Error interno del servidor /users' });
     }
 });
 app.post('/registers', async (req, res) => {
@@ -307,10 +307,22 @@ app.post('/registers', async (req, res) => {
         res.json(result);
     } catch (error) {
         console.error('Error:', error.message);
-        res.status(500).json({ success: false, message: 'Error interno del servidor' });
+        res.status(500).json({ success: false, message: 'Error interno del servidor /registros' });
     }
 });
+//#endregion
 
+//#region DELETES
+app.delete('/registers', async (req, res) => {
+    try {
+        const result = await eraseregister(req.body);
+        res.json(result);
+    } catch (error) {
+        console.error('Error:', error.message);
+        res.status(500).json({ success: false, message: 'Error interno del servidor /registros' });
+    }
+});
+//#endregion
 
 //PROTISTAS
 app.post('/registers/filos', async (req, res) => { res.send(await getFilos(req.body)) });
