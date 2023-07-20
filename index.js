@@ -204,6 +204,20 @@ const switchstate = async (body) => {
     }
 }
 
+const eraseregister = async (body) => {
+    let id = body.id;
+    let query = `DELETE FROM registroimg WHERE registroimg.regid = '${id}'; DELETE FROM registros WHERE registros.regid = '${id}'`;
+    console.log('Query maked')
+    try {
+        var data = await db.query(query);
+        console.log('Delete done.')
+        return 'Delete done.';
+    } catch (error) {
+        console.error("Error en la consulta:", error);
+        throw error;
+    }
+}
+
 const postUserRegister = async (body) => {
     const usuid = body.usuid;
     const query = `SELECT * FROM registros_de_usuario WHERE usuario_id like $1;`;
