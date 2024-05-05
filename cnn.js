@@ -1,25 +1,16 @@
 const {Pool} = require('pg')
+require('dotenv').config();
 
 const pool = new Pool ({
-    host: "protosoft-server.postgres.database.azure.com",
-    port: "5432",
-    database: "protosoft-db-v3",
-    user: "utnAdmin@protosoft-server",
-    password: "Password123*",
+    host: process.env.PGHOST,
+    port: "",
+    database: process.env.PGDATABASE,
+    user: process.env.PGUSER,
+    password: process.env.PGPASSWORD,
     ssl:{
         require: true,
         rejectUnauthorized: false
     }
-
-    // host: "localhost",
-    // port: "5432",
-    // database: "protosoft-db-v2",
-    // user: "postgres",
-    // password: "200113",
-    // ssl:{
-    //     require: true,
-    //     rejectUnauthorized: false
-    // }
 });
 
 const db = pool;

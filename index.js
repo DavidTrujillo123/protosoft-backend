@@ -233,7 +233,6 @@ const getTenSimpleRegisters = async () => {
     const query = `select regnombre_cientifico, imgruta 
                     from registros, registroimg 
                     where registros.regid = registroimg.regid 
-                    order by regfechasis desc
                     limit 10;`;
     return getJustData(query);
 }
@@ -241,7 +240,7 @@ const getSimpleRegisters = async () =>{
     const query = `select regnombre_cientifico, imgruta 
     from registros, registroimg 
     where registros.regid = registroimg.regid 
-    order by regfechasis desc;`;
+    `;
     return getJustData(query);
 }
 const getAllregisters = async () => {
