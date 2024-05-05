@@ -26,7 +26,21 @@ END;
 $$;
 
 
-CREATE FUNCTION public.insert_registros(p_usuid character varying, p_regestado boolean, p_regnombre_cientifico character varying, p_regnombre_vulgar character varying, p_regespecie character varying, p_reggenero character varying, p_regfamilia character varying, p_regorden character varying, p_regclase character varying, p_regfilo character varying, p_regreino character varying, p_regdescripcion character varying, p_reghabitat character varying, p_img character varying) RETURNS void
+CREATE OR REPLACE FUNCTION public.insert_registros(
+        p_usuid character varying, 
+        p_regestado boolean, 
+        p_regnombre_cientifico character varying, 
+        p_regnombre_vulgar character varying, 
+        p_regespecie character varying, 
+        p_reggenero character varying,
+        p_regfamilia character varying, 
+        p_regorden character varying, 
+        p_regclase character varying, 
+        p_regfilo character varying, 
+        p_regreino character varying, 
+        p_regdescripcion character varying, 
+        p_reghabitat character varying, 
+        p_img character varying) RETURNS void
     LANGUAGE plpgsql
     AS $$
 DECLARE

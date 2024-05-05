@@ -318,7 +318,7 @@ app.delete('/registers', async (req, res) => {
         res.json(result);
     } catch (error) {
         console.error('Error:', error.message);
-        res.status(500).json({ success: false, message: 'Error interno del servidor /registros' });
+        res.status(500).json({ success: false, message: `Error interno del servidor /registros ${error.message}` });
     }
 });
 //#endregion
