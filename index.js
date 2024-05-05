@@ -257,7 +257,7 @@ const getTenRegisters = async () => {
 //#endregion
 
 //#region CUSTOMS
-app.get('/', async (req, res) => { res.sendFile(__dirname + '/info.html') });
+// app.get('/', async (req, res) => { res.sendFile(__dirname + '/info.html') });
 app.post('/login', async (req, res) => {
     try { res.send(await login(req.body)) }
     catch (e) { res.status(500).send("Error interno del servidor") }
