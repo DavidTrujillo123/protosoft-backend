@@ -28,7 +28,7 @@ $$;
 
 CREATE OR REPLACE FUNCTION public.insert_registros(
         p_usuid character varying, 
-        p_regestado boolean, 
+        p_regestado character varying, 
         p_regnombre_cientifico character varying, 
         p_regnombre_vulgar character varying, 
         p_regespecie character varying, 
@@ -114,6 +114,76 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION public.filtrarbusqueda(
+	p_radio_seleccionado character varying,
+	p_nombre character varying)
+    RETURNS TABLE(
+		registro_id character varying, 
+		usuario_id character varying, 
+		estado_registro character varying, 
+		nombre_cientifico character varying, 
+		nombre_vulgar character varying, 
+		especie character varying, 
+		genero character varying, 
+		familia character varying, 
+		orden character varying, 
+		clase character varying, 
+		filo character varying, 
+		reino character varying, 
+		descripcion text, 
+		habitat text, 
+		ruta_imagen text,
+		autor text
+		) 
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+    ROWS 1000
+
+AS $BODY$
+BEGIN
+    RETURN QUERY 
+    SELECT 
+        r.regid AS registro_id, 
+        r.usuid AS usuario_id, 
+        r.regestado AS estado_registro, 
+        r.regnombre_cientifico AS nombre_cientifico, 
+        r.regnombre_vulgar AS nombre_vulgar,
+        e.espnombre AS especie, 
+        g.gennombre AS genero, 
+        f.famnombre AS familia, 
+        o.ordnombre AS orden, 
+        c.clanombre AS clase,
+        fi.filnombre AS filo, 
+        re.reinombre AS reino, 
+        r.regdescripcion AS descripcion, 
+        r.reghabitat AS habitat, 
+        ri.imgruta AS ruta_imagen,
+		CONCAT(usu.usunombre, ' ', usu.usuapellido) AS autor
+    FROM registros r
+	LEFT JOIN registroimg ri ON r.regid = ri.regid
+    LEFT JOIN especies e ON r.regespecie = e.espid
+    LEFT JOIN generos g ON r.reggenero = g.genid
+    LEFT JOIN familias f ON r.regfamilia = f.famid
+    LEFT JOIN ordenes o ON r.regorden = o.ordid
+    LEFT JOIN clases c ON r.regclase = c.claid
+    LEFT JOIN filos fi ON r.regfilo = fi.filid
+    LEFT JOIN reinos re ON r.regreino = re.reinombre
+	LEFT JOIN usuarios usu ON r.usuid = usu.usuid
+    WHERE 
+        CASE p_radio_seleccionado
+            WHEN 'filo' THEN fi.filnombre LIKE CONCAT('%',p_nombre,'%')
+            WHEN 'clase' THEN c.clanombre LIKE CONCAT('%',p_nombre,'%')
+            WHEN 'orden' THEN o.ordnombre LIKE CONCAT('%',p_nombre,'%')
+            WHEN 'familia' THEN f.famnombre LIKE CONCAT('%',p_nombre,'%')
+            WHEN 'genero' THEN g.gennombre LIKE CONCAT('%',p_nombre,'%')
+            WHEN 'especie' THEN e.espnombre LIKE CONCAT('%',p_nombre,'%')
+            WHEN 'nombre' THEN r.regnombre_cientifico LIKE CONCAT('%',p_nombre,'%')
+			ELSE FALSE
+        END;
+END;
+$BODY$;
+
 CREATE TABLE public.clases (
     claid character varying(10) NOT NULL,
     filid character varying(10) NOT NULL,
@@ -172,7 +242,7 @@ CREATE TABLE public.registroimg (
 CREATE TABLE public.registros (
     regid character varying(20) NOT NULL,
     usuid character varying(20) NOT NULL,
-    regestado boolean NOT NULL,
+    regestado character varying(1) NOT NULL,
     regnombre_cientifico character varying(256) NOT NULL,
     regnombre_vulgar character varying(256) NOT NULL,
     regespecie character varying(256) NOT NULL,
@@ -253,10 +323,6 @@ ALTER TABLE ONLY public.filos
     ADD CONSTRAINT pk_filos PRIMARY KEY (filid);
 
 
---
--- TOC entry 4172 (class 2606 OID 17263)
--- Name: generos pk_generos; Type: CONSTRAINT; Schema: public; Owner: utnAdmin
---
 
 ALTER TABLE ONLY public.generos
     ADD CONSTRAINT pk_generos PRIMARY KEY (genid);
